@@ -13,6 +13,9 @@ import { ReservationsModule } from './modules/reservations/reservations.module';
 import { FeedbackModule } from './modules/feedback/feedback.module';
 import { EventsModule } from './modules/events/events.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { CitiesModule } from './modules/cities/cities.module';
+import { CategoriesModule } from './modules/categories/categories.module';
+import { TagsModule } from './modules/tags/tags.module';
 import configuration from './common/config/configuration';
 import { validationSchema } from './common/config/validation';
 
@@ -35,6 +38,9 @@ import { validationSchema } from './common/config/validation';
     FeedbackModule,
     EventsModule,
     NotificationsModule,
+    CitiesModule,
+    CategoriesModule,
+    TagsModule,
   ],
   controllers: [],
   providers: [],
