@@ -1,27 +1,41 @@
-import { Controller, Get, Post, Body, UseGuards, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from '@nestjs/common';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { MenusService } from './menus.service';
 import { CreateMenuDto } from './dto/create-menu.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../auth/guards/roles.guard';
-import { Roles } from '../auth/decorators/roles.decorator';
-import { UserType } from '../auth/dto/login.dto';
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { UpdateMenuDto } from './dto/update-menu.dto';
 
-@ApiTags('Menus')
+@ApiTags('menus')
 @Controller('menus')
 export class MenusController {
     constructor(private readonly menusService: MenusService) { }
 
     @Post()
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(UserType.OWNER, UserType.ADMIN)
-    @ApiBearerAuth()
-    async create(@Body() createMenuDto: CreateMenuDto) {
+    @ApiOperation({ summary: 'Create a new menu' })
+    create(@Body() createMenuDto: CreateMenuDto) {
         return this.menusService.create(createMenuDto);
     }
 
-    @Get('restaurant/:restaurantId')
-    async findAll(@Param('restaurantId') restaurantId: string) {
-        return this.menusService.findAllByRestaurant(restaurantId);
+    @Get()
+    @ApiOperation({ summary: 'Get all menus' })
+    findAll() {
+        return this.menusService.findAll();
+    }
+
+    @Get(':id')
+    @ApiOperation({ summary: 'Get a menu by ID' })
+    findOne(@Param('id', ParseUUIDPipe) id: string) {
+        return this.menusService.findOne(id);
+    }
+
+    @Patch(':id')
+    @ApiOperation({ summary: 'Update a menu' })
+    update(@Param('id', ParseUUIDPipe) id: string, @Body() updateMenuDto: UpdateMenuDto) {
+        return this.menusService.update(id, updateMenuDto);
+    }
+
+    @Delete(':id')
+    @ApiOperation({ summary: 'Delete a menu' })
+    remove(@Param('id', ParseUUIDPipe) id: string) {
+        return this.menusService.remove(id);
     }
 }

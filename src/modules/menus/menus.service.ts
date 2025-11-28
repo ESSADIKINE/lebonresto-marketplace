@@ -1,43 +1,29 @@
-import { Injectable, Logger, InternalServerErrorException } from '@nestjs/common';
-import { SupabaseService } from '../../database/supabase.service';
-import { Menu } from './entities/menu.entity';
+import { Injectable } from '@nestjs/common';
+import { MenusRepository } from './menus.repository';
 import { CreateMenuDto } from './dto/create-menu.dto';
+import { UpdateMenuDto } from './dto/update-menu.dto';
 
 @Injectable()
 export class MenusService {
-    private readonly logger = new Logger(MenusService.name);
-    private readonly table = 'menus';
+    constructor(private readonly menusRepository: MenusRepository) { }
 
-    constructor(private readonly supabase: SupabaseService) { }
-
-    async create(createMenuDto: CreateMenuDto): Promise<Menu> {
-        const { data, error } = await this.supabase
-            .getClient()
-            .from(this.table)
-            .insert(createMenuDto)
-            .select()
-            .single();
-
-        if (error) {
-            this.logger.error(`Error creating menu: ${error.message}`);
-            throw new InternalServerErrorException('Could not create menu');
-        }
-
-        return data;
+    create(createMenuDto: CreateMenuDto) {
+        return this.menusRepository.create(createMenuDto);
     }
 
-    async findAllByRestaurant(restaurantId: string): Promise<Menu[]> {
-        const { data, error } = await this.supabase
-            .getClient()
-            .from(this.table)
-            .select('*')
-            .eq('restaurant_id', restaurantId);
+    findAll() {
+        return this.menusRepository.findAll();
+    }
 
-        if (error) {
-            this.logger.error(`Error finding menus: ${error.message}`);
-            throw new InternalServerErrorException('Error finding menus');
-        }
+    findOne(id: string) {
+        return this.menusRepository.findOne(id);
+    }
 
-        return data;
+    update(id: string, updateMenuDto: UpdateMenuDto) {
+        return this.menusRepository.update(id, updateMenuDto);
+    }
+
+    remove(id: string) {
+        return this.menusRepository.remove(id);
     }
 }

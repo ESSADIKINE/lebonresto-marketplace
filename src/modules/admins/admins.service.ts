@@ -1,59 +1,33 @@
-import { Injectable, Logger, InternalServerErrorException } from '@nestjs/common';
-import { SupabaseService } from '../../database/supabase.service';
-import { Admin } from './entities/admin.entity';
+import { Injectable } from '@nestjs/common';
+import { AdminsRepository } from './admins.repository';
+import { CreateAdminDto } from './dto/create-admin.dto';
+import { UpdateAdminDto } from './dto/update-admin.dto';
 
 @Injectable()
 export class AdminsService {
-    private readonly logger = new Logger(AdminsService.name);
-    private readonly table = 'admins';
+    constructor(private readonly adminsRepository: AdminsRepository) { }
 
-    constructor(private readonly supabase: SupabaseService) { }
-
-    async create(data: Partial<Admin>): Promise<Admin> {
-        const { data: created, error } = await this.supabase
-            .getClient()
-            .from(this.table)
-            .insert(data)
-            .select()
-            .single();
-
-        if (error) {
-            this.logger.error(`Error creating admin: ${error.message}`);
-            throw new InternalServerErrorException('Could not create admin');
-        }
-
-        return created;
+    create(createAdminDto: CreateAdminDto | any) {
+        return this.adminsRepository.create(createAdminDto);
     }
 
-    async findOneByEmail(email: string): Promise<Admin | null> {
-        const { data, error } = await this.supabase
-            .getClient()
-            .from(this.table)
-            .select('*')
-            .eq('email', email)
-            .single();
-
-        if (error && error.code !== 'PGRST116') {
-            this.logger.error(`Error finding admin by email: ${error.message}`);
-            throw new InternalServerErrorException('Error finding admin');
-        }
-
-        return data;
+    findAll() {
+        return this.adminsRepository.findAll();
     }
 
-    async findOneById(id: string): Promise<Admin | null> {
-        const { data, error } = await this.supabase
-            .getClient()
-            .from(this.table)
-            .select('*')
-            .eq('id', id)
-            .single();
+    findOne(id: string) {
+        return this.adminsRepository.findOne(id);
+    }
 
-        if (error && error.code !== 'PGRST116') {
-            this.logger.error(`Error finding admin by id: ${error.message}`);
-            throw new InternalServerErrorException('Error finding admin');
-        }
+    update(id: string, updateAdminDto: UpdateAdminDto) {
+        return this.adminsRepository.update(id, updateAdminDto);
+    }
 
-        return data;
+    remove(id: string) {
+        return this.adminsRepository.remove(id);
+    }
+
+    findOneByEmail(email: string) {
+        return this.adminsRepository.findOneByEmail(email);
     }
 }

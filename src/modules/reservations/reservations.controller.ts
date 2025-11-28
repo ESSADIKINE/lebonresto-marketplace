@@ -1,30 +1,41 @@
-import { Controller, Get, Post, Body, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from '@nestjs/common';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { ReservationsService } from './reservations.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../auth/guards/roles.guard';
-import { Roles } from '../auth/decorators/roles.decorator';
-import { UserType } from '../auth/dto/login.dto';
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { UpdateReservationDto } from './dto/update-reservation.dto';
 
-@ApiTags('Reservations')
+@ApiTags('reservations')
 @Controller('reservations')
 export class ReservationsController {
     constructor(private readonly reservationsService: ReservationsService) { }
 
     @Post()
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(UserType.CUSTOMER)
-    @ApiBearerAuth()
-    async create(@Request() req, @Body() createReservationDto: CreateReservationDto) {
-        return this.reservationsService.create(req.user.sub, createReservationDto);
+    @ApiOperation({ summary: 'Create a new reservation' })
+    create(@Body() createReservationDto: CreateReservationDto) {
+        return this.reservationsService.create(createReservationDto);
     }
 
-    @Get('my')
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(UserType.CUSTOMER)
-    @ApiBearerAuth()
-    async findAll(@Request() req) {
-        return this.reservationsService.findAllByCustomer(req.user.sub);
+    @Get()
+    @ApiOperation({ summary: 'Get all reservations' })
+    findAll() {
+        return this.reservationsService.findAll();
+    }
+
+    @Get(':id')
+    @ApiOperation({ summary: 'Get a reservation by ID' })
+    findOne(@Param('id', ParseUUIDPipe) id: string) {
+        return this.reservationsService.findOne(id);
+    }
+
+    @Patch(':id')
+    @ApiOperation({ summary: 'Update a reservation' })
+    update(@Param('id', ParseUUIDPipe) id: string, @Body() updateReservationDto: UpdateReservationDto) {
+        return this.reservationsService.update(id, updateReservationDto);
+    }
+
+    @Delete(':id')
+    @ApiOperation({ summary: 'Delete a reservation' })
+    remove(@Param('id', ParseUUIDPipe) id: string) {
+        return this.reservationsService.remove(id);
     }
 }

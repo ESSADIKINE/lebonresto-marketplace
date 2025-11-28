@@ -1,43 +1,29 @@
-import { Injectable, Logger, InternalServerErrorException } from '@nestjs/common';
-import { SupabaseService } from '../../database/supabase.service';
-import { Feedback } from './entities/feedback.entity';
+import { Injectable } from '@nestjs/common';
+import { FeedbackRepository } from './feedback.repository';
 import { CreateFeedbackDto } from './dto/create-feedback.dto';
+import { UpdateFeedbackDto } from './dto/update-feedback.dto';
 
 @Injectable()
 export class FeedbackService {
-    private readonly logger = new Logger(FeedbackService.name);
-    private readonly table = 'feedback';
+    constructor(private readonly feedbackRepository: FeedbackRepository) { }
 
-    constructor(private readonly supabase: SupabaseService) { }
-
-    async create(customerId: string, createFeedbackDto: CreateFeedbackDto): Promise<Feedback> {
-        const { data, error } = await this.supabase
-            .getClient()
-            .from(this.table)
-            .insert({ ...createFeedbackDto, customer_id: customerId })
-            .select()
-            .single();
-
-        if (error) {
-            this.logger.error(`Error creating feedback: ${error.message}`);
-            throw new InternalServerErrorException('Could not create feedback');
-        }
-
-        return data;
+    create(createFeedbackDto: CreateFeedbackDto) {
+        return this.feedbackRepository.create(createFeedbackDto);
     }
 
-    async findAllByRestaurant(restaurantId: string): Promise<Feedback[]> {
-        const { data, error } = await this.supabase
-            .getClient()
-            .from(this.table)
-            .select('*')
-            .eq('restaurant_id', restaurantId);
+    findAll() {
+        return this.feedbackRepository.findAll();
+    }
 
-        if (error) {
-            this.logger.error(`Error finding feedback: ${error.message}`);
-            throw new InternalServerErrorException('Error finding feedback');
-        }
+    findOne(id: string) {
+        return this.feedbackRepository.findOne(id);
+    }
 
-        return data;
+    update(id: string, updateFeedbackDto: UpdateFeedbackDto) {
+        return this.feedbackRepository.update(id, updateFeedbackDto);
+    }
+
+    remove(id: string) {
+        return this.feedbackRepository.remove(id);
     }
 }

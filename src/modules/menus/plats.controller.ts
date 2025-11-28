@@ -1,59 +1,41 @@
-import { Controller, Get, Post, Body, UseGuards, Param, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from '@nestjs/common';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { PlatsService } from './plats.service';
 import { CreatePlatDto } from './dto/create-plat.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../auth/guards/roles.guard';
-import { Roles } from '../auth/decorators/roles.decorator';
-import { UserType } from '../auth/dto/login.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { CloudinaryService } from '../images/cloudinary.service';
-import { ApiTags, ApiBearerAuth, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import { UpdatePlatDto } from './dto/update-plat.dto';
 
-@ApiTags('Plats')
+@ApiTags('plats')
 @Controller('plats')
 export class PlatsController {
-    constructor(
-        private readonly platsService: PlatsService,
-        private readonly cloudinaryService: CloudinaryService,
-    ) { }
+    constructor(private readonly platsService: PlatsService) { }
 
     @Post()
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(UserType.OWNER, UserType.ADMIN)
-    @ApiBearerAuth()
-    @UseInterceptors(FileInterceptor('image'))
-    @ApiConsumes('multipart/form-data')
-    @ApiBody({
-        schema: {
-            type: 'object',
-            properties: {
-                name: { type: 'string' },
-                description: { type: 'string' },
-                price: { type: 'number' },
-                is_published: { type: 'boolean' },
-                is_premium: { type: 'boolean' },
-                restaurant_id: { type: 'string' },
-                image: {
-                    type: 'string',
-                    format: 'binary',
-                },
-            },
-        },
-    })
-    async create(
-        @Body() createPlatDto: CreatePlatDto,
-        @UploadedFile() file: Express.Multer.File,
-    ) {
-        let imageUrl: string | undefined;
-        if (file) {
-            const result = await this.cloudinaryService.uploadImage(file);
-            imageUrl = result.secure_url;
-        }
-        return this.platsService.create(createPlatDto, imageUrl);
+    @ApiOperation({ summary: 'Create a new plat' })
+    create(@Body() createPlatDto: CreatePlatDto) {
+        return this.platsService.create(createPlatDto);
     }
 
-    @Get('restaurant/:restaurantId')
-    async findAll(@Param('restaurantId') restaurantId: string) {
-        return this.platsService.findAllByRestaurant(restaurantId);
+    @Get()
+    @ApiOperation({ summary: 'Get all plats' })
+    findAll() {
+        return this.platsService.findAll();
+    }
+
+    @Get(':id')
+    @ApiOperation({ summary: 'Get a plat by ID' })
+    findOne(@Param('id', ParseUUIDPipe) id: string) {
+        return this.platsService.findOne(id);
+    }
+
+    @Patch(':id')
+    @ApiOperation({ summary: 'Update a plat' })
+    update(@Param('id', ParseUUIDPipe) id: string, @Body() updatePlatDto: UpdatePlatDto) {
+        return this.platsService.update(id, updatePlatDto);
+    }
+
+    @Delete(':id')
+    @ApiOperation({ summary: 'Delete a plat' })
+    remove(@Param('id', ParseUUIDPipe) id: string) {
+        return this.platsService.remove(id);
     }
 }

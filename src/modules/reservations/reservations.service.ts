@@ -1,43 +1,29 @@
-import { Injectable, Logger, InternalServerErrorException } from '@nestjs/common';
-import { SupabaseService } from '../../database/supabase.service';
-import { Reservation } from './entities/reservation.entity';
+import { Injectable } from '@nestjs/common';
+import { ReservationsRepository } from './reservations.repository';
 import { CreateReservationDto } from './dto/create-reservation.dto';
+import { UpdateReservationDto } from './dto/update-reservation.dto';
 
 @Injectable()
 export class ReservationsService {
-    private readonly logger = new Logger(ReservationsService.name);
-    private readonly table = 'reservations';
+    constructor(private readonly reservationsRepository: ReservationsRepository) { }
 
-    constructor(private readonly supabase: SupabaseService) { }
-
-    async create(customerId: string, createReservationDto: CreateReservationDto): Promise<Reservation> {
-        const { data, error } = await this.supabase
-            .getClient()
-            .from(this.table)
-            .insert({ ...createReservationDto, customer_id: customerId })
-            .select()
-            .single();
-
-        if (error) {
-            this.logger.error(`Error creating reservation: ${error.message}`);
-            throw new InternalServerErrorException('Could not create reservation');
-        }
-
-        return data;
+    create(createReservationDto: CreateReservationDto) {
+        return this.reservationsRepository.create(createReservationDto);
     }
 
-    async findAllByCustomer(customerId: string): Promise<Reservation[]> {
-        const { data, error } = await this.supabase
-            .getClient()
-            .from(this.table)
-            .select('*')
-            .eq('customer_id', customerId);
+    findAll() {
+        return this.reservationsRepository.findAll();
+    }
 
-        if (error) {
-            this.logger.error(`Error finding reservations: ${error.message}`);
-            throw new InternalServerErrorException('Error finding reservations');
-        }
+    findOne(id: string) {
+        return this.reservationsRepository.findOne(id);
+    }
 
-        return data;
+    update(id: string, updateReservationDto: UpdateReservationDto) {
+        return this.reservationsRepository.update(id, updateReservationDto);
+    }
+
+    remove(id: string) {
+        return this.reservationsRepository.remove(id);
     }
 }

@@ -1,43 +1,29 @@
-import { Injectable, Logger, InternalServerErrorException } from '@nestjs/common';
-import { SupabaseService } from '../../database/supabase.service';
-import { Plat } from './entities/plat.entity';
+import { Injectable } from '@nestjs/common';
+import { PlatsRepository } from './plats.repository';
 import { CreatePlatDto } from './dto/create-plat.dto';
+import { UpdatePlatDto } from './dto/update-plat.dto';
 
 @Injectable()
 export class PlatsService {
-    private readonly logger = new Logger(PlatsService.name);
-    private readonly table = 'plats';
+    constructor(private readonly platsRepository: PlatsRepository) { }
 
-    constructor(private readonly supabase: SupabaseService) { }
-
-    async create(createPlatDto: CreatePlatDto, imageUrl?: string): Promise<Plat> {
-        const { data, error } = await this.supabase
-            .getClient()
-            .from(this.table)
-            .insert({ ...createPlatDto, image_url: imageUrl })
-            .select()
-            .single();
-
-        if (error) {
-            this.logger.error(`Error creating plat: ${error.message}`);
-            throw new InternalServerErrorException('Could not create plat');
-        }
-
-        return data;
+    create(createPlatDto: CreatePlatDto) {
+        return this.platsRepository.create(createPlatDto);
     }
 
-    async findAllByRestaurant(restaurantId: string): Promise<Plat[]> {
-        const { data, error } = await this.supabase
-            .getClient()
-            .from(this.table)
-            .select('*')
-            .eq('restaurant_id', restaurantId);
+    findAll() {
+        return this.platsRepository.findAll();
+    }
 
-        if (error) {
-            this.logger.error(`Error finding plats: ${error.message}`);
-            throw new InternalServerErrorException('Error finding plats');
-        }
+    findOne(id: string) {
+        return this.platsRepository.findOne(id);
+    }
 
-        return data;
+    update(id: string, updatePlatDto: UpdatePlatDto) {
+        return this.platsRepository.update(id, updatePlatDto);
+    }
+
+    remove(id: string) {
+        return this.platsRepository.remove(id);
     }
 }

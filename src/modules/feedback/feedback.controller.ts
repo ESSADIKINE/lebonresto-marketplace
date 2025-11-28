@@ -1,27 +1,41 @@
-import { Controller, Get, Post, Body, UseGuards, Request, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from '@nestjs/common';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { FeedbackService } from './feedback.service';
 import { CreateFeedbackDto } from './dto/create-feedback.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../auth/guards/roles.guard';
-import { Roles } from '../auth/decorators/roles.decorator';
-import { UserType } from '../auth/dto/login.dto';
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { UpdateFeedbackDto } from './dto/update-feedback.dto';
 
-@ApiTags('Feedback')
+@ApiTags('feedback')
 @Controller('feedback')
 export class FeedbackController {
     constructor(private readonly feedbackService: FeedbackService) { }
 
     @Post()
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(UserType.CUSTOMER)
-    @ApiBearerAuth()
-    async create(@Request() req, @Body() createFeedbackDto: CreateFeedbackDto) {
-        return this.feedbackService.create(req.user.sub, createFeedbackDto);
+    @ApiOperation({ summary: 'Create new feedback' })
+    create(@Body() createFeedbackDto: CreateFeedbackDto) {
+        return this.feedbackService.create(createFeedbackDto);
     }
 
-    @Get('restaurant/:restaurantId')
-    async findAll(@Param('restaurantId') restaurantId: string) {
-        return this.feedbackService.findAllByRestaurant(restaurantId);
+    @Get()
+    @ApiOperation({ summary: 'Get all feedback' })
+    findAll() {
+        return this.feedbackService.findAll();
+    }
+
+    @Get(':id')
+    @ApiOperation({ summary: 'Get feedback by ID' })
+    findOne(@Param('id', ParseUUIDPipe) id: string) {
+        return this.feedbackService.findOne(id);
+    }
+
+    @Patch(':id')
+    @ApiOperation({ summary: 'Update feedback' })
+    update(@Param('id', ParseUUIDPipe) id: string, @Body() updateFeedbackDto: UpdateFeedbackDto) {
+        return this.feedbackService.update(id, updateFeedbackDto);
+    }
+
+    @Delete(':id')
+    @ApiOperation({ summary: 'Delete feedback' })
+    remove(@Param('id', ParseUUIDPipe) id: string) {
+        return this.feedbackService.remove(id);
     }
 }

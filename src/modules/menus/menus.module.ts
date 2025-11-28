@@ -1,14 +1,16 @@
 import { Module } from '@nestjs/common';
 import { MenusService } from './menus.service';
 import { MenusController } from './menus.controller';
+import { MenusRepository } from './menus.repository';
 import { PlatsService } from './plats.service';
 import { PlatsController } from './plats.controller';
-import { ImagesModule } from '../images/images.module';
+import { PlatsRepository } from './plats.repository';
+import { DatabaseModule } from '../../database/database.module';
 
 @Module({
-    imports: [ImagesModule],
+    imports: [DatabaseModule],
     controllers: [MenusController, PlatsController],
-    providers: [MenusService, PlatsService],
+    providers: [MenusService, MenusRepository, PlatsService, PlatsRepository],
     exports: [MenusService, PlatsService],
 })
 export class MenusModule { }
