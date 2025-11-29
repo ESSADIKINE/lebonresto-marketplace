@@ -3,6 +3,11 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 
 export class CreatePlatDto {
+    @ApiProperty({ example: 'uuid-restaurant' })
+    @IsUUID()
+    @IsNotEmpty()
+    restaurant_id: string;
+
     @ApiProperty({ example: 'Burger' })
     @IsString()
     @IsNotEmpty()
@@ -19,20 +24,20 @@ export class CreatePlatDto {
     @IsNumber()
     price?: number;
 
-    @ApiPropertyOptional({ example: true })
+    @ApiPropertyOptional({ example: 'https://example.com/burger.jpg' })
+    @IsOptional()
+    @IsString()
+    image_url?: string;
+
+    @ApiPropertyOptional({ example: true, default: true })
     @IsOptional()
     @Transform(({ value }) => value === 'true' || value === true)
     @IsBoolean()
     is_published?: boolean;
 
-    @ApiPropertyOptional({ example: false })
+    @ApiPropertyOptional({ example: false, default: false })
     @IsOptional()
     @Transform(({ value }) => value === 'true' || value === true)
     @IsBoolean()
     is_premium?: boolean;
-
-    @ApiProperty({ example: 'uuid-restaurant' })
-    @IsUUID()
-    @IsNotEmpty()
-    restaurant_id: string;
 }

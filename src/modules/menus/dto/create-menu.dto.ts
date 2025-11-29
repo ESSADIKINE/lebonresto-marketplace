@@ -2,6 +2,11 @@ import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateMenuDto {
+    @ApiProperty({ example: 'uuid-restaurant' })
+    @IsUUID()
+    @IsNotEmpty()
+    restaurant_id: string;
+
     @ApiProperty({ example: 'Lunch Menu' })
     @IsString()
     @IsNotEmpty()
@@ -12,8 +17,8 @@ export class CreateMenuDto {
     @IsString()
     description?: string;
 
-    @ApiProperty({ example: 'uuid-restaurant' })
-    @IsUUID()
-    @IsNotEmpty()
-    restaurant_id: string;
+    @ApiPropertyOptional({ example: 'https://drive.google.com/file/d/xxx/view' })
+    @IsOptional()
+    @IsString()
+    pdf_url?: string;
 }

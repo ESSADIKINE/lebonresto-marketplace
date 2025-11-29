@@ -1,62 +1,143 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { RestaurantsRepository } from './restaurants.repository';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
-import { GoogleDriveService } from '../../google-drive/google-drive.service';
+import { RestaurantStatus } from './entities/restaurant.entity';
+import { CloudinaryService } from '../images/cloudinary.service';
 
 @Injectable()
 export class RestaurantsService {
     constructor(
         private readonly restaurantsRepository: RestaurantsRepository,
-        private readonly googleDriveService: GoogleDriveService,
+        private readonly cloudinaryService: CloudinaryService,
     ) { }
 
-    create(createRestaurantDto: CreateRestaurantDto) {
-        return this.restaurantsRepository.create(createRestaurantDto);
+    async create(createRestaurantDto: CreateRestaurantDto) {
+        // Initialize default values for fields not in DTO
+        const restaurantData = {
+            ...createRestaurantDto,
+            view_count: 0,
+            rating_avg: 0,
+            is_active: createRestaurantDto.is_active ?? true,
+            status: createRestaurantDto.status ?? RestaurantStatus.BASIC,
+        };
+
+        return this.restaurantsRepository.create(restaurantData);
     }
 
-    findAll() {
+    async findAll() {
         return this.restaurantsRepository.findAll();
     }
 
-    findOne(id: string) {
+    async search(params: { cityId?: string; categoryId?: string; tagId?: string; q?: string }) {
+        return this.restaurantsRepository.search(params);
+    }
+
+    async findOne(id: string) {
         return this.restaurantsRepository.findOne(id);
     }
 
-    update(id: string, updateRestaurantDto: UpdateRestaurantDto) {
+    async update(id: string, updateRestaurantDto: UpdateRestaurantDto) {
         return this.restaurantsRepository.update(id, updateRestaurantDto);
     }
 
-    remove(id: string) {
+    async remove(id: string) {
         return this.restaurantsRepository.remove(id);
     }
 
-    // Relational methods
-    getMenus(id: string) {
+    // Relational Methods
+
+    async getMenus(id: string) {
         return this.restaurantsRepository.findMenus(id);
     }
 
-    getPlats(id: string) {
+    async getPlats(id: string) {
         return this.restaurantsRepository.findPlats(id);
     }
 
-    getImages(id: string) {
+    async getImages(id: string) {
         return this.restaurantsRepository.findImages(id);
     }
 
-    getTags(id: string) {
+    async addImage(restaurantId: string, url: string, label?: string) {
+        return this.restaurantsRepository.addImage(restaurantId, url, label);
+    }
+
+    async getTags(id: string) {
         return this.restaurantsRepository.findTags(id);
     }
 
-    getEvents(id: string) {
+    async addTag(restaurantId: string, tagId: string) {
+        return this.restaurantsRepository.addTag(restaurantId, tagId);
+    }
+
+    /**
+     * Link multiple tags to a restaurant
+     * @param restaurantId - The restaurant ID
+     * @param tagIds - Array of tag IDs
+     */
+    async addTags(restaurantId: string, tagIds: string[]) {
+        return this.restaurantsRepository.addTags(restaurantId, tagIds);
+    }
+
+    /**
+     * Upload multiple images to a restaurant
+     * @param restaurantId - The restaurant ID
+     * @param files - Array of image files
+     * @param body - Optional label or labels array
+     */
+    async uploadMultipleImages(
+        restaurantId: string,
+        files: Express.Multer.File[],
+        body: { label?: string; labels?: string[] },
+    ) {
+        if (!files || files.length === 0) {
+            throw new BadRequestException('Aucun fichier reçu');
+        }
+
+        const uploadedImages: any[] = [];
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+
+            // Determine label for this image
+            let imageLabel: string;
+            if (body.labels && body.labels[i]) {
+                imageLabel = body.labels[i];
+            } else if (body.label) {
+                imageLabel = body.label;
+            } else {
+                imageLabel = `Image ${i + 1}`;
+            }
+
+            // Upload to Cloudinary
+            const uploadResult = await this.cloudinaryService.uploadImage(file);
+
+            // Save to database
+            const savedImage = await this.restaurantsRepository.addImage(
+                restaurantId,
+                uploadResult.secure_url,
+                imageLabel,
+            );
+
+            uploadedImages.push(savedImage);
+        }
+
+        return {
+            count: uploadedImages.length,
+            images: uploadedImages,
+        };
+    }
+
+    async getEvents(id: string) {
         return this.restaurantsRepository.findEvents(id);
     }
 
-    getReservations(id: string) {
+    async getReservations(id: string) {
         return this.restaurantsRepository.findReservations(id);
     }
 
-    getFeedback(id: string) {
+    async getFeedback(id: string) {
         return this.restaurantsRepository.findFeedback(id);
     }
 
@@ -82,27 +163,4 @@ export class RestaurantsService {
             avgRating,
         };
     }
-
-    search(filters: { cityId?: string; categoryId?: string; tagId?: string; q?: string }) {
-        return this.restaurantsRepository.search(filters);
-    }
-
-    /**
-     * Creates or retrieves a Google Drive folder for a restaurant
-     * @param id - The restaurant ID
-     * @returns The updated restaurant with drive_folder_id
-     */
-    async createDriveFolderForRestaurant(id: string) {
-        // 1) Fetch restaurant by id
-        const restaurant = await this.restaurantsRepository.findOne(id);
-
-        // 2) Ensure the folder exists in Google Drive
-        const folderId = await this.googleDriveService.ensureRestaurantFolder(restaurant.name);
-
-        // 3) Update restaurants.drive_folder_id in Supabase
-        const updated = await this.restaurantsRepository.updateDriveFolderId(id, folderId);
-
-        return updated;
-    }
 }
-

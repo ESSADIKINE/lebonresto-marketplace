@@ -3,13 +3,12 @@ import { RestaurantsService } from './restaurants.service';
 import { RestaurantsController } from './restaurants.controller';
 import { RestaurantsRepository } from './restaurants.repository';
 import { DatabaseModule } from '../../database/database.module';
-import { GoogleDriveModule } from '../../google-drive/google-drive.module';
+import { ImagesModule } from '../images/images.module';
 
 @Module({
-    imports: [DatabaseModule, GoogleDriveModule],
+    imports: [DatabaseModule, ImagesModule],
     controllers: [RestaurantsController],
     providers: [RestaurantsService, RestaurantsRepository],
     exports: [RestaurantsService],
 })
 export class RestaurantsModule { }
-

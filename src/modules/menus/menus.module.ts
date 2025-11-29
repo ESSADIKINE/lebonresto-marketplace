@@ -6,9 +6,10 @@ import { PlatsService } from './plats.service';
 import { PlatsController } from './plats.controller';
 import { PlatsRepository } from './plats.repository';
 import { DatabaseModule } from '../../database/database.module';
+import { ImagesModule } from '../images/images.module';
 
 @Module({
-    imports: [DatabaseModule],
+    imports: [DatabaseModule, ImagesModule],
     controllers: [MenusController, PlatsController],
     providers: [MenusService, MenusRepository, PlatsService, PlatsRepository],
     exports: [MenusService, PlatsService],

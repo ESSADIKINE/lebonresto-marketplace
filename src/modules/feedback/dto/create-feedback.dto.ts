@@ -1,7 +1,13 @@
 import { IsNotEmpty, IsOptional, IsString, IsNumber, IsUUID, Min, Max } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 
 export class CreateFeedbackDto {
+    @ApiProperty({ example: 'uuid-customer' })
+    @IsUUID()
+    @IsNotEmpty()
+    customer_id: string;
+
     @ApiProperty({ example: 'uuid-restaurant' })
     @IsUUID()
     @IsNotEmpty()
@@ -23,4 +29,10 @@ export class CreateFeedbackDto {
     @IsOptional()
     @IsString()
     comment?: string;
+
+    @ApiPropertyOptional({ example: 0.5 })
+    @IsOptional()
+    @Transform(({ value }) => parseFloat(value))
+    @IsNumber()
+    sentiment_score?: number;
 }

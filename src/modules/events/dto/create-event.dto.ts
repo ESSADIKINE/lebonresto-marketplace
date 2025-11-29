@@ -23,7 +23,12 @@ export class CreateEventDto {
     @IsNotEmpty()
     event_date: string;
 
-    @ApiPropertyOptional({ example: false })
+    @ApiPropertyOptional({ example: 'https://example.com/event.jpg' })
+    @IsOptional()
+    @IsString()
+    image_url?: string;
+
+    @ApiPropertyOptional({ example: false, default: false })
     @IsOptional()
     @Transform(({ value }) => value === 'true' || value === true)
     @IsBoolean()
@@ -35,7 +40,7 @@ export class CreateEventDto {
     @IsNumber()
     price?: number;
 
-    @ApiPropertyOptional({ example: true })
+    @ApiPropertyOptional({ example: true, default: true })
     @IsOptional()
     @Transform(({ value }) => value === 'true' || value === true)
     @IsBoolean()

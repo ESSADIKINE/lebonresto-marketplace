@@ -212,4 +212,76 @@ export class RestaurantsRepository {
 
         return data;
     }
+
+    /**
+     * Add an image to a restaurant
+     * @param restaurantId - The restaurant ID
+     * @param url - The image URL
+     * @param label - Optional label for the image
+     */
+    async addImage(restaurantId: string, url: string, label?: string) {
+        const { data, error } = await this.supabase
+            .getClient()
+            .from('restaurant_images')
+            .insert({
+                restaurant_id: restaurantId,
+                url,
+                label: label ?? null,
+            })
+            .select('*')
+            .single();
+
+        if (error) {
+            throw new InternalServerErrorException(error.message);
+        }
+
+        return data;
+    }
+
+    /**
+     * Link a tag to a restaurant
+     * @param restaurantId - The restaurant ID
+     * @param tagId - The tag ID
+     */
+    async addTag(restaurantId: string, tagId: string) {
+        const { data, error } = await this.supabase
+            .getClient()
+            .from('restaurant_tags')
+            .insert({
+                restaurant_id: restaurantId,
+                tag_id: tagId,
+            })
+            .select('*')
+            .single();
+
+        if (error) {
+            throw new InternalServerErrorException(error.message);
+        }
+
+        return data;
+    }
+
+    /**
+     * Link multiple tags to a restaurant
+     * @param restaurantId - The restaurant ID
+     * @param tagIds - Array of tag IDs
+     */
+    async addTags(restaurantId: string, tagIds: string[]) {
+        const records = tagIds.map(tagId => ({
+            restaurant_id: restaurantId,
+            tag_id: tagId,
+        }));
+
+        const { data, error } = await this.supabase
+            .getClient()
+            .from('restaurant_tags')
+            .insert(records)
+            .select('*');
+
+        if (error) {
+            throw new InternalServerErrorException(error.message);
+        }
+
+        return data;
+    }
 }

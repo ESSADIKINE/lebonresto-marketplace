@@ -7,24 +7,34 @@ export class CreateOwnerDto {
     @IsNotEmpty()
     email: string;
 
-    @ApiProperty({ example: 'password123', minLength: 6 })
+    @ApiProperty({ example: 'StrongPassw0rd!', minLength: 8 })
     @IsString()
     @IsNotEmpty()
-    @MinLength(6)
+    @MinLength(8)
     password: string;
 
-    @ApiPropertyOptional({ example: 'John' })
+    @ApiPropertyOptional({ example: 'Iloli Group' })
     @IsOptional()
     @IsString()
-    first_name?: string;
-
-    @ApiPropertyOptional({ example: 'Doe' })
-    @IsOptional()
-    @IsString()
-    last_name?: string;
+    name?: string;
 
     @ApiPropertyOptional({ example: '+212600000000' })
     @IsOptional()
     @IsString()
     phone?: string;
+
+    @ApiPropertyOptional({ example: 'https://example.com/avatar.png' })
+    @IsOptional()
+    @IsString()
+    avatar_url?: string;
+
+    @ApiPropertyOptional({ example: 'Iloli Restaurant SARL' })
+    @IsOptional()
+    @IsString()
+    company_name?: string;
+
+    @ApiPropertyOptional({ example: 'MA987654321' })
+    @IsOptional()
+    @IsString()
+    vat_number?: string;
 }

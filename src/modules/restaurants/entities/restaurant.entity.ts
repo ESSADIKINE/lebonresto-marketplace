@@ -23,6 +23,7 @@ export class Restaurant {
     is_active: boolean;
     view_count: number;
     rating_avg: number;
+    drive_folder_id?: string;
     created_at: Date;
     updated_at: Date;
 }

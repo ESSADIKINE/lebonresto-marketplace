@@ -1,9 +1,14 @@
-import { IsNotEmpty, IsOptional, IsString, IsNumber, IsEnum, IsEmail } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsNumber, IsEnum, IsEmail, IsBoolean, IsUUID } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { RestaurantStatus } from '../entities/restaurant.entity';
 import { Transform } from 'class-transformer';
 
 export class CreateRestaurantDto {
+    @ApiProperty({ example: 'uuid-owner' })
+    @IsUUID()
+    @IsNotEmpty()
+    owner_id: string;
+
     @ApiProperty({ example: 'My Restaurant' })
     @IsString()
     @IsNotEmpty()
@@ -13,6 +18,11 @@ export class CreateRestaurantDto {
     @IsOptional()
     @IsString()
     description?: string;
+
+    @ApiPropertyOptional({ example: 'https://example.com/logo.png' })
+    @IsOptional()
+    @IsString()
+    logo_url?: string;
 
     @ApiPropertyOptional({ example: '123 Main St' })
     @IsOptional()
@@ -55,4 +65,20 @@ export class CreateRestaurantDto {
     @IsOptional()
     @IsString()
     category_id?: string;
+
+    @ApiPropertyOptional({ example: 'https://example.com/360-tour' })
+    @IsOptional()
+    @IsString()
+    visit360_url?: string;
+
+    @ApiPropertyOptional({ example: 'https://youtube.com/watch?v=xxx' })
+    @IsOptional()
+    @IsString()
+    video_url?: string;
+
+    @ApiPropertyOptional({ example: true, default: true })
+    @IsOptional()
+    @Transform(({ value }) => value === 'true' || value === true)
+    @IsBoolean()
+    is_active?: boolean;
 }

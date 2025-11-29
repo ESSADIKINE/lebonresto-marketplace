@@ -4,7 +4,6 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
-import { GoogleDriveModule } from './google-drive/google-drive.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { CustomersModule } from './modules/customers/customers.module';
 import { OwnersModule } from './modules/owners/owners.module';
@@ -30,7 +29,6 @@ import { validationSchema } from './common/config/validation';
       validationSchema,
     }),
     DatabaseModule,
-    GoogleDriveModule,
     AuthModule,
     CustomersModule,
     OwnersModule,
