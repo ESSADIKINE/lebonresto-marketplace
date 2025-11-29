@@ -54,8 +54,16 @@ export class MenusService {
             throw new BadRequestException('Le fichier doit être un PDF');
         }
 
-        // Upload PDF to Cloudinary (resource_type: 'auto' handles PDFs)
-        const uploadResult = await this.cloudinaryService.uploadFile(file, 'auto');
+        // Generate a unique public_id with .pdf extension to ensure correct Content-Type/Disposition
+        const uniqueId = `${Date.now()}-${Math.round(Math.random() * 1E9)}`;
+        const publicId = `menu-${uniqueId}.pdf`;
+
+        // Upload PDF to Cloudinary as 'raw' (public) with explicit public_id
+        const uploadResult = await this.cloudinaryService.uploadFile(file, 'raw', {
+            public_id: publicId,
+            access_mode: 'public',
+            type: 'upload',
+        });
 
         // Create menu entry with the Cloudinary URL
         const menuData: CreateMenuDto = {

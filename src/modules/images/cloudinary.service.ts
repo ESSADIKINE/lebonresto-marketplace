@@ -10,10 +10,15 @@ export class CloudinaryService {
         return this.uploadFile(file, 'image');
     }
 
-    uploadFile(file: Express.Multer.File, resourceType: 'image' | 'raw' | 'auto' = 'auto'): Promise<any> {
+    uploadFile(file: Express.Multer.File, resourceType: 'image' | 'raw' | 'auto' = 'auto', options: Record<string, any> = {}): Promise<any> {
         return new Promise((resolve, reject) => {
+            const uploadOptions = {
+                resource_type: resourceType,
+                ...options,
+            };
+
             const uploadStream = cloudinary.uploader.upload_stream(
-                { resource_type: resourceType },
+                uploadOptions,
                 (error, result) => {
                     if (error) return reject(error);
                     resolve(result);
