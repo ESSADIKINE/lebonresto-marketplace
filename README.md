@@ -42,8 +42,7 @@ LeBonResto Backend provides a complete API for managing:
   - Supabase JS Client (v2)
   - Service Role Key for backend operations (bypasses RLS)
   - Row Level Security (RLS) enabled on tables
-- **[Google Drive API](https://developers.google.com/drive)** - PDF menu storage
-- **[Cloudinary](https://cloudinary.com/)** - Image hosting and optimization
+- **[Cloudinary](https://cloudinary.com/)** - Storage for images and PDF menus
 
 ### Security & Authentication
 - **JWT** - Access tokens (15min) + Refresh tokens (7 days)
@@ -84,7 +83,7 @@ LeBonResto Backend provides a complete API for managing:
                          │
 ┌────────────────────────▼────────────────────────────────────┐
 │                  Supabase (PostgreSQL)                       │
-│                  External APIs (Drive, Cloudinary)           │
+│                  External APIs (Cloudinary)                  │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -119,7 +118,6 @@ LeBonResto Backend provides a complete API for managing:
   - `id`, `name`, `description`, `address`, `phone`, `email`
   - `city_id` (FK), `category_id` (FK), `owner_id` (FK)
   - `status` (PENDING | APPROVED | REJECTED | SUSPENDED)
-  - `drive_folder_id` (Google Drive folder for menus/docs)
 - **`menus`** - Restaurant menus
   - `id`, `name`, `description`, `restaurant_id` (FK), `pdf_url`
 - **`plats`** - Individual dishes
@@ -132,7 +130,7 @@ LeBonResto Backend provides a complete API for managing:
 #### Operations
 - **`reservations`** - Table bookings
   - `id`, `customer_id` (FK), `restaurant_id` (FK)
-  - `reservation_date`, `party_size`, `status` (PENDING | CONFIRMED | CANCELLED)
+  - `reservation_date`, `party_size`, `status` (PENDING | CONFIRMED | CANCELLED | COMPLETED | NO_SHOW)
 - **`feedback`** - Customer reviews
   - `id`, `customer_id` (FK), `restaurant_id` (FK)
   - `rating`, `comment`
@@ -157,8 +155,7 @@ LeBonResto Backend provides a complete API for managing:
 
 - **Node.js** v18+ and npm
 - **Supabase account** with project created
-- **Google Cloud** service account (for Drive API)
-- **Cloudinary account** (for image hosting)
+- **Cloudinary account** (for image and PDF hosting)
 
 ### Installation
 
@@ -183,13 +180,6 @@ LeBonResto Backend provides a complete API for managing:
    - Create tables using Supabase SQL editor
    - Enable RLS policies (if using direct client access)
    - Copy `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`
-
-5. **Set up Google Drive**
-   - Create a service account in Google Cloud Console
-   - Download JSON credentials
-   - Extract `client_email` and `private_key`
-   - Create "LeBonResto" folder in Drive
-   - Share folder with service account email
 
 ### Running the Application
 
@@ -253,14 +243,7 @@ RATE_LIMIT_MAX=100
 CORS_ORIGINS=http://localhost:3000,http://localhost:4200
 
 # ===================================
-# GOOGLE DRIVE (PDF Menus)
-# ===================================
-GOOGLE_CLIENT_EMAIL=your-service-account@your-project.iam.gserviceaccount.com
-GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nYourPrivateKeyHere\n-----END PRIVATE KEY-----\n"
-GOOGLE_DRIVE_FOLDER_ID=19DHQ0-zf_yzjDDNiLJjKKPun-XzXtgFw
-
-# ===================================
-# CLOUDINARY (Image Hosting)
+# CLOUDINARY (Image & PDF Hosting)
 # ===================================
 CLOUDINARY_CLOUD_NAME=your-cloud-name
 CLOUDINARY_API_KEY=123456789012345
@@ -444,13 +427,9 @@ lebonresto-backend/
 │   │   ├── categories/               # Category reference
 │   │   └── tags/                     # Tag reference
 │   │
-│   ├── google-drive/                 # Google Drive integration
-│   │   ├── google-drive.module.ts
-│   │   └── google-drive.service.ts  # Folder creation, file upload
-│   │
 │   └── cloudinary/                   # Cloudinary integration
 │       ├── cloudinary.module.ts
-│       └── cloudinary.service.ts     # Image upload, transformation
+│       └── cloudinary.service.ts     # Image & PDF upload
 │
 ├── test/                             # E2E tests
 ├── .env                              # Environment variables (not in git)
@@ -490,7 +469,6 @@ lebonresto-backend/
 - Full CRUD for restaurants
 - Search and filtering
 - Relational endpoints (menus, plats, images, tags, events, reservations, feedback)
-- Google Drive folder creation for menus
 - Restaurant summary with aggregated stats
 
 **Endpoints**:
@@ -503,7 +481,7 @@ lebonresto-backend/
 - `GET /restaurants/:id/menus` - Get restaurant menus
 - `GET /restaurants/:id/plats` - Get restaurant dishes
 - `GET /restaurants/:id/summary` - Get aggregated stats
-- `POST /restaurants/:id/create-drive-folder` - Create Drive folder
+- `POST /restaurants/:id/upload-image` - Upload images
 
 ---
 
@@ -530,7 +508,7 @@ lebonresto-backend/
 **Key Features**:
 - Create/update/cancel reservations
 - List reservations by restaurant or customer
-- Status management (PENDING, CONFIRMED, CANCELLED)
+- Status management (PENDING, CONFIRMED, CANCELLED, COMPLETED, NO_SHOW)
 
 **Endpoints**:
 - `POST /reservations` - Create reservation
@@ -543,25 +521,11 @@ lebonresto-backend/
 
 ### External Service Modules
 
-#### Google Drive Module
-**Purpose**: Manage PDF menus and documents in Google Drive  
-**Key Features**:
-- JWT authentication with service account
-- Folder creation per restaurant
-- File upload and retrieval
-- Folder ID storage in database
-
-**Service Methods**:
-- `createFolder(name, parentId)` - Create folder
-- `findFolderByName(name, parentId)` - Search folder
-- `ensureRestaurantFolder(restaurantName)` - Create/retrieve folder
-
----
-
 #### Cloudinary Module
-**Purpose**: Image hosting and optimization  
+**Purpose**: Image and PDF hosting and optimization  
 **Key Features**:
 - Upload restaurant images
+- Upload PDF menus
 - Image transformations
 - CDN delivery
 - Cloudinary URL storage

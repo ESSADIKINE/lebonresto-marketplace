@@ -5,28 +5,28 @@ import { UpdateCityDto } from './dto/update-city.dto';
 
 @Injectable()
 export class CitiesService {
-    constructor(private readonly citiesRepository: CitiesRepository) { }
+  constructor(private readonly citiesRepository: CitiesRepository) {}
 
-    create(createCityDto: CreateCityDto) {
-        if (!createCityDto.country) {
-            createCityDto.country = 'Morocco';
-        }
-        return this.citiesRepository.create(createCityDto);
+  create(createCityDto: CreateCityDto) {
+    if (!createCityDto.country) {
+      createCityDto.country = 'Morocco';
     }
+    return this.citiesRepository.create(createCityDto);
+  }
 
-    findAll() {
-        return this.citiesRepository.findAll();
-    }
+  findAll() {
+    return this.citiesRepository.findAll();
+  }
 
-    findOne(id: string) {
-        return this.citiesRepository.findOne(id);
-    }
+  findOne(id: string) {
+    return this.citiesRepository.findOne(id);
+  }
 
-    update(id: string, updateCityDto: UpdateCityDto) {
-        return this.citiesRepository.update(id, updateCityDto);
-    }
+  update(id: string, updateCityDto: UpdateCityDto) {
+    return this.citiesRepository.update(id, updateCityDto);
+  }
 
-    remove(id: string) {
-        return this.citiesRepository.remove(id);
-    }
+  remove(id: string) {
+    return this.citiesRepository.remove(id);
+  }
 }

@@ -5,9 +5,9 @@ import { OwnersRepository } from './owners.repository';
 import { DatabaseModule } from '../../database/database.module';
 
 @Module({
-    imports: [DatabaseModule],
-    controllers: [OwnersController],
-    providers: [OwnersService, OwnersRepository],
-    exports: [OwnersService],
+  imports: [DatabaseModule],
+  controllers: [OwnersController],
+  providers: [OwnersService, OwnersRepository],
+  exports: [OwnersService],
 })
-export class OwnersModule { }
+export class OwnersModule {}

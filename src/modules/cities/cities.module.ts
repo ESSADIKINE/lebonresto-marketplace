@@ -5,9 +5,9 @@ import { CitiesRepository } from './cities.repository';
 import { DatabaseModule } from '../../database/database.module';
 
 @Module({
-    imports: [DatabaseModule],
-    controllers: [CitiesController],
-    providers: [CitiesService, CitiesRepository],
-    exports: [CitiesService],
+  imports: [DatabaseModule],
+  controllers: [CitiesController],
+  providers: [CitiesService, CitiesRepository],
+  exports: [CitiesService],
 })
-export class CitiesModule { }
+export class CitiesModule {}

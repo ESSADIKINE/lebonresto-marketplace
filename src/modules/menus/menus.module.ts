@@ -9,9 +9,9 @@ import { DatabaseModule } from '../../database/database.module';
 import { ImagesModule } from '../images/images.module';
 
 @Module({
-    imports: [DatabaseModule, ImagesModule],
-    controllers: [MenusController, PlatsController],
-    providers: [MenusService, MenusRepository, PlatsService, PlatsRepository],
-    exports: [MenusService, PlatsService],
+  imports: [DatabaseModule, ImagesModule],
+  controllers: [MenusController, PlatsController],
+  providers: [MenusService, MenusRepository, PlatsService, PlatsRepository],
+  exports: [MenusService, PlatsService],
 })
-export class MenusModule { }
+export class MenusModule {}

@@ -5,9 +5,9 @@ import { TagsRepository } from './tags.repository';
 import { DatabaseModule } from '../../database/database.module';
 
 @Module({
-    imports: [DatabaseModule],
-    controllers: [TagsController],
-    providers: [TagsService, TagsRepository],
-    exports: [TagsService],
+  imports: [DatabaseModule],
+  controllers: [TagsController],
+  providers: [TagsService, TagsRepository],
+  exports: [TagsService],
 })
-export class TagsModule { }
+export class TagsModule {}

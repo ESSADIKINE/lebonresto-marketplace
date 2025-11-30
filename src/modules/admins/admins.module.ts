@@ -5,9 +5,9 @@ import { AdminsRepository } from './admins.repository';
 import { DatabaseModule } from '../../database/database.module';
 
 @Module({
-    imports: [DatabaseModule],
-    controllers: [AdminsController],
-    providers: [AdminsService, AdminsRepository],
-    exports: [AdminsService],
+  imports: [DatabaseModule],
+  controllers: [AdminsController],
+  providers: [AdminsService, AdminsRepository],
+  exports: [AdminsService],
 })
-export class AdminsModule { }
+export class AdminsModule {}

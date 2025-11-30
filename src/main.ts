@@ -18,7 +18,7 @@ async function bootstrap() {
   app.enableCors();
 
   // Logging
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+
   const morgan = require('morgan');
   app.use(morgan('dev'));
 

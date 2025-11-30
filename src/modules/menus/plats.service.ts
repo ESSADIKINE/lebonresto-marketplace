@@ -5,25 +5,25 @@ import { UpdatePlatDto } from './dto/update-plat.dto';
 
 @Injectable()
 export class PlatsService {
-    constructor(private readonly platsRepository: PlatsRepository) { }
+  constructor(private readonly platsRepository: PlatsRepository) {}
 
-    create(createPlatDto: CreatePlatDto) {
-        return this.platsRepository.create(createPlatDto);
-    }
+  create(createPlatDto: CreatePlatDto) {
+    return this.platsRepository.create(createPlatDto);
+  }
 
-    findAll() {
-        return this.platsRepository.findAll();
-    }
+  findAll() {
+    return this.platsRepository.findAll();
+  }
 
-    findOne(id: string) {
-        return this.platsRepository.findOne(id);
-    }
+  findOne(id: string) {
+    return this.platsRepository.findOne(id);
+  }
 
-    update(id: string, updatePlatDto: UpdatePlatDto) {
-        return this.platsRepository.update(id, updatePlatDto);
-    }
+  update(id: string, updatePlatDto: UpdatePlatDto) {
+    return this.platsRepository.update(id, updatePlatDto);
+  }
 
-    remove(id: string) {
-        return this.platsRepository.remove(id);
-    }
+  remove(id: string) {
+    return this.platsRepository.remove(id);
+  }
 }

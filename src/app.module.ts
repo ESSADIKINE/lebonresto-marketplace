@@ -47,5 +47,4 @@ import { validationSchema } from './common/config/validation';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
-
+export class AppModule {}

@@ -32,17 +32,7 @@ All IDs are filled in - just copy and paste into Swagger!
 
 ---
 
-## Step 2: Create Google Drive Folder
-
-**Endpoint**: `POST /restaurants/{RESTAURANT_ID}/create-drive-folder`
-
-⚠️ **Replace `{RESTAURANT_ID}` with the ID from Step 1**
-
-No body needed.
-
----
-
-## Step 3: Link Tags to Restaurant (6 requests)
+## Step 2: Link Tags to Restaurant (6 requests)
 
 **Endpoint**: `POST /restaurants/{RESTAURANT_ID}/tags/{tagId}`
 
@@ -82,7 +72,7 @@ No body needed for any of these - just execute the requests.
 
 ---
 
-## Step 4: Add Restaurant Images (5 requests)
+## Step 3: Add Restaurant Images (5 requests)
 
 **Endpoint**: `POST /restaurants/{RESTAURANT_ID}/images`
 
@@ -130,24 +120,19 @@ No body needed for any of these - just execute the requests.
 
 ---
 
-## Step 5: Create Menu Entry
+## Step 4: Create Menu Entry (with PDF Upload)
 
-**Endpoint**: `POST /menus`
+**Endpoint**: `POST /menus/upload` (Multipart Form Data)
 
-⚠️ **First, upload your PDF to Google Drive:**
-1. Upload `C:\Users\essadikineayman\Downloads\Illoli-lenu.pdf` to the restaurant's Drive folder
-2. Share it publicly (Anyone with link can view)
-3. Copy the shareable link
-4. Use that link below as `<PDF_URL>`
+⚠️ **Use Postman or Swagger for this as it involves file upload**
 
-```json
-{
-  "restaurant_id": "{RESTAURANT_ID}",
-  "title": "Menu Iloli Nador",
-  "description": "Découvrez notre carte de burgers fusion japonais et spécialités maison.",
-  "pdf_url": "<PDF_URL_FROM_GOOGLE_DRIVE>"
-}
-```
+**Fields**:
+- `file`: (Select your PDF file)
+- `restaurant_id`: `<RESTAURANT_ID>`
+- `title`: "Menu Iloli Nador"
+- `description`: "Découvrez notre carte de burgers fusion japonais et spécialités maison."
+
+This will upload the PDF to Cloudinary and create the menu entry in one go.
 
 ---
 

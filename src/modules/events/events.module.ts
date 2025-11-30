@@ -4,9 +4,9 @@ import { EventsController } from './events.controller';
 import { ImagesModule } from '../images/images.module';
 
 @Module({
-    imports: [ImagesModule],
-    controllers: [EventsController],
-    providers: [EventsService],
-    exports: [EventsService],
+  imports: [ImagesModule],
+  controllers: [EventsController],
+  providers: [EventsService],
+  exports: [EventsService],
 })
-export class EventsModule { }
+export class EventsModule {}

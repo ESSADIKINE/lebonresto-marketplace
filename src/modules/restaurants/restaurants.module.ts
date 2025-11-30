@@ -6,9 +6,9 @@ import { DatabaseModule } from '../../database/database.module';
 import { ImagesModule } from '../images/images.module';
 
 @Module({
-    imports: [DatabaseModule, ImagesModule],
-    controllers: [RestaurantsController],
-    providers: [RestaurantsService, RestaurantsRepository],
-    exports: [RestaurantsService],
+  imports: [DatabaseModule, ImagesModule],
+  controllers: [RestaurantsController],
+  providers: [RestaurantsService, RestaurantsRepository],
+  exports: [RestaurantsService],
 })
-export class RestaurantsModule { }
+export class RestaurantsModule {}

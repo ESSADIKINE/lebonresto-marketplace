@@ -103,19 +103,7 @@
 
 ---
 
-## Step 5: Create Google Drive Folder
-
-**Endpoint**: `POST /restaurants/{id}/create-drive-folder`
-
-⚠️ **Replace `{id}` with RESTAURANT_ID**
-
-No body needed.
-
-📝 **This will create a Google Drive folder and save the folder ID**
-
----
-
-## Step 6: Link Tags to Restaurant (7 requests)
+## Step 5: Link Tags to Restaurant (7 requests)
 
 **Endpoint**: `POST /restaurants/{id}/tags/{tagId}`
 
@@ -135,7 +123,7 @@ POST /restaurants/<RESTAURANT_ID>/tags/<TAG_ID_7>
 
 ---
 
-## Step 7: Add Restaurant Images (5 requests)
+## Step 6: Add Restaurant Images (5 requests)
 
 **Endpoint**: `POST /restaurants/{id}/images`
 
@@ -183,36 +171,19 @@ POST /restaurants/<RESTAURANT_ID>/tags/<TAG_ID_7>
 
 ---
 
-## Step 8: Upload Menu PDF to Google Drive
+## Step 7: Create Menu Entry (with PDF Upload)
 
-### Option A: Manual Upload via Google Drive
+**Endpoint**: `POST /menus/upload` (Multipart Form Data)
 
-1. Go to your Google Drive
-2. Navigate to the restaurant's folder (you got the folder ID in Step 5)
-3. Upload `C:\Users\essadikineayman\Downloads\Illoli-lenu.pdf`
-4. Right-click → Share → Change to "Anyone with the link can view"
-5. Copy the shareable link (format: `https://drive.google.com/file/d/FILE_ID/view`)
+⚠️ **Use Postman or Swagger for this as it involves file upload**
 
-### Option B: Use GoogleDriveService (if you have upload endpoint)
+**Fields**:
+- `file`: (Select your PDF file)
+- `restaurant_id`: `<RESTAURANT_ID>`
+- `title`: "Menu Iloli - Pour les fidèles"
+- `description`: "Menu spécial pour les fidèles clients d'Iloli."
 
-If you've implemented a file upload endpoint, use it. Otherwise, use Option A.
-
----
-
-## Step 9: Create Menu Entry
-
-**Endpoint**: `POST /menus`
-
-⚠️ **Replace `<RESTAURANT_ID>` and `<PDF_URL>` with actual values**
-
-```json
-{
-  "restaurant_id": "<RESTAURANT_ID>",
-  "title": "Menu Iloli - Pour les fidèles",
-  "description": "Menu spécial pour les fidèles clients d'Iloli. Découvrez notre sélection de sushi, sashimi, et plats japonais raffinés.",
-  "pdf_url": "<PDF_URL_FROM_GOOGLE_DRIVE>"
-}
-```
+This will upload the PDF to Cloudinary and create the menu entry in one go.
 
 ---
 

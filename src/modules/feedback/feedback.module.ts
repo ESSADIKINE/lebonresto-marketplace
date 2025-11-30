@@ -5,9 +5,9 @@ import { FeedbackRepository } from './feedback.repository';
 import { DatabaseModule } from '../../database/database.module';
 
 @Module({
-    imports: [DatabaseModule],
-    controllers: [FeedbackController],
-    providers: [FeedbackService, FeedbackRepository],
-    exports: [FeedbackService],
+  imports: [DatabaseModule],
+  controllers: [FeedbackController],
+  providers: [FeedbackService, FeedbackRepository],
+  exports: [FeedbackService],
 })
-export class FeedbackModule { }
+export class FeedbackModule {}

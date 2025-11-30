@@ -5,9 +5,9 @@ import { ReservationsRepository } from './reservations.repository';
 import { DatabaseModule } from '../../database/database.module';
 
 @Module({
-    imports: [DatabaseModule],
-    controllers: [ReservationsController],
-    providers: [ReservationsService, ReservationsRepository],
-    exports: [ReservationsService],
+  imports: [DatabaseModule],
+  controllers: [ReservationsController],
+  providers: [ReservationsService, ReservationsRepository],
+  exports: [ReservationsService],
 })
-export class ReservationsModule { }
+export class ReservationsModule {}

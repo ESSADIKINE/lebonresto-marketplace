@@ -119,17 +119,7 @@ Use these JSON bodies to manually create the Iloli restaurant data in Swagger UI
 
 ---
 
-## Step 6: Create Google Drive Folder
-
-**Endpoint**: `POST /restaurants/{id}/create-drive-folder`
-
-⚠️ **Replace `{id}` in the URL with your restaurant ID**
-
-No body needed.
-
----
-
-## Step 7: Link Tags to Restaurant (7 requests)
+## Step 6: Link Tags to Restaurant (7 requests)
 
 **Endpoint**: `POST /restaurants/{id}/tags/{tagId}`
 
@@ -149,7 +139,7 @@ POST /restaurants/<RESTAURANT_ID>/tags/<TAG_ID_7>
 
 ---
 
-## Step 8: Add Restaurant Images (5 requests)
+## Step 7: Add Restaurant Images (5 requests)
 
 **Endpoint**: `POST /restaurants/{id}/images`
 
@@ -197,20 +187,19 @@ POST /restaurants/<RESTAURANT_ID>/tags/<TAG_ID_7>
 
 ---
 
-## Step 9: Create Menu
+## Step 8: Create Menu (with PDF Upload)
 
-**Endpoint**: `POST /menus`
+**Endpoint**: `POST /menus/upload` (Multipart Form Data)
 
-⚠️ **Replace `<RESTAURANT_ID>` and `<PDF_URL>` with actual values**
+⚠️ **Use Swagger's "Try it out" button for file upload**
 
-```json
-{
-  "restaurant_id": "<RESTAURANT_ID>",
-  "name": "Menu pour les fidèles",
-  "description": "Menu spécial pour les fidèles clients d'Iloli.",
-  "pdf_url": "https://drive.google.com/file/d/YOUR_FILE_ID/view"
-}
-```
+**Fields**:
+- `file`: (Select your PDF file)
+- `restaurant_id`: `<RESTAURANT_ID>`
+- `title`: "Menu pour les fidèles"
+- `description`: "Menu spécial pour les fidèles clients d'Iloli."
+
+This will upload the PDF to Cloudinary and create the menu entry.
 
 ---
 

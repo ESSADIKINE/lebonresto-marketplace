@@ -5,25 +5,27 @@ import { UpdateReservationDto } from './dto/update-reservation.dto';
 
 @Injectable()
 export class ReservationsService {
-    constructor(private readonly reservationsRepository: ReservationsRepository) { }
+  constructor(
+    private readonly reservationsRepository: ReservationsRepository,
+  ) {}
 
-    create(createReservationDto: CreateReservationDto) {
-        return this.reservationsRepository.create(createReservationDto);
-    }
+  create(createReservationDto: CreateReservationDto) {
+    return this.reservationsRepository.create(createReservationDto);
+  }
 
-    findAll() {
-        return this.reservationsRepository.findAll();
-    }
+  findAll() {
+    return this.reservationsRepository.findAll();
+  }
 
-    findOne(id: string) {
-        return this.reservationsRepository.findOne(id);
-    }
+  findOne(id: string) {
+    return this.reservationsRepository.findOne(id);
+  }
 
-    update(id: string, updateReservationDto: UpdateReservationDto) {
-        return this.reservationsRepository.update(id, updateReservationDto);
-    }
+  update(id: string, updateReservationDto: UpdateReservationDto) {
+    return this.reservationsRepository.update(id, updateReservationDto);
+  }
 
-    remove(id: string) {
-        return this.reservationsRepository.remove(id);
-    }
+  remove(id: string) {
+    return this.reservationsRepository.remove(id);
+  }
 }

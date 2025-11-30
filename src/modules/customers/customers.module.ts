@@ -5,9 +5,9 @@ import { CustomersRepository } from './customers.repository';
 import { DatabaseModule } from '../../database/database.module';
 
 @Module({
-    imports: [DatabaseModule],
-    controllers: [CustomersController],
-    providers: [CustomersService, CustomersRepository],
-    exports: [CustomersService],
+  imports: [DatabaseModule],
+  controllers: [CustomersController],
+  providers: [CustomersService, CustomersRepository],
+  exports: [CustomersService],
 })
-export class CustomersModule { }
+export class CustomersModule {}

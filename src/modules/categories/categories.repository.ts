@@ -1,85 +1,89 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { SupabaseService } from '../../database/supabase.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 
 @Injectable()
 export class CategoriesRepository {
-    private readonly table = 'categories';
+  private readonly table = 'categories';
 
-    constructor(private readonly supabase: SupabaseService) { }
+  constructor(private readonly supabase: SupabaseService) {}
 
-    async create(data: CreateCategoryDto) {
-        const { data: created, error } = await this.supabase
-            .getClient()
-            .from(this.table)
-            .insert(data)
-            .select()
-            .single();
+  async create(data: CreateCategoryDto) {
+    const { data: created, error } = await this.supabase
+      .getClient()
+      .from(this.table)
+      .insert(data)
+      .select()
+      .single();
 
-        if (error) {
-            throw new InternalServerErrorException(error.message);
-        }
-
-        return created;
+    if (error) {
+      throw new InternalServerErrorException(error.message);
     }
 
-    async findAll() {
-        const { data, error } = await this.supabase
-            .getClient()
-            .from(this.table)
-            .select('*')
-            .order('created_at', { ascending: false });
+    return created;
+  }
 
-        if (error) {
-            throw new InternalServerErrorException(error.message);
-        }
+  async findAll() {
+    const { data, error } = await this.supabase
+      .getClient()
+      .from(this.table)
+      .select('*')
+      .order('created_at', { ascending: false });
 
-        return data;
+    if (error) {
+      throw new InternalServerErrorException(error.message);
     }
 
-    async findOne(id: string) {
-        const { data, error } = await this.supabase
-            .getClient()
-            .from(this.table)
-            .select('*')
-            .eq('id', id)
-            .single();
+    return data;
+  }
 
-        if (error || !data) {
-            throw new NotFoundException(`Category with ID ${id} not found`);
-        }
+  async findOne(id: string) {
+    const { data, error } = await this.supabase
+      .getClient()
+      .from(this.table)
+      .select('*')
+      .eq('id', id)
+      .single();
 
-        return data;
+    if (error || !data) {
+      throw new NotFoundException(`Category with ID ${id} not found`);
     }
 
-    async update(id: string, data: UpdateCategoryDto) {
-        const { data: updated, error } = await this.supabase
-            .getClient()
-            .from(this.table)
-            .update(data)
-            .eq('id', id)
-            .select()
-            .single();
+    return data;
+  }
 
-        if (error) {
-            throw new InternalServerErrorException(error.message);
-        }
+  async update(id: string, data: UpdateCategoryDto) {
+    const { data: updated, error } = await this.supabase
+      .getClient()
+      .from(this.table)
+      .update(data)
+      .eq('id', id)
+      .select()
+      .single();
 
-        return updated;
+    if (error) {
+      throw new InternalServerErrorException(error.message);
     }
 
-    async remove(id: string) {
-        const { error } = await this.supabase
-            .getClient()
-            .from(this.table)
-            .delete()
-            .eq('id', id);
+    return updated;
+  }
 
-        if (error) {
-            throw new InternalServerErrorException(error.message);
-        }
+  async remove(id: string) {
+    const { error } = await this.supabase
+      .getClient()
+      .from(this.table)
+      .delete()
+      .eq('id', id);
 
-        return { message: 'Category deleted successfully' };
+    if (error) {
+      throw new InternalServerErrorException(error.message);
     }
+
+    return { message: 'Category deleted successfully' };
+  }
 }
